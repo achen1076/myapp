@@ -13,6 +13,7 @@ import { minWidth } from "../utils/constants.tsx";
 var isAuth = localStorage.getItem("IsAuth");
 
 var displayed = false;
+var loaded = false;
 
 const setNavbar = (event) => {
   const width = window.innerWidth;
@@ -39,35 +40,39 @@ const setNavbar = (event) => {
   }
 };
 
-const setData = async (user) => {
-  if (user) {
-    const currentUser = auth.currentUser;
-    const docRef = doc(db, currentUser.uid, "user");
-    const docSnap = await getDoc(docRef);
-    while (!docSnap.exists()) {}
-    if (localStorage.getItem("IsAuth")) {
-      if (docSnap.exists()) {
-        const uid = currentUser.uid;
-        const path = "/account/" + uid;
-        document.getElementById("accountLink").href = path;
-        document.getElementById("accountMenuLink").href = path;
-        document.getElementById("accountNavTitle").innerHTML =
-          docSnap.data().name;
+export class NavBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      uid: null,
+    };
+  }
+
+  setData = async (user) => {
+    if (user) {
+      const currentUser = auth.currentUser;
+      const docRef = doc(db, currentUser.uid, "user");
+      const docSnap = await getDoc(docRef);
+      while (!docSnap.exists()) {}
+      if (localStorage.getItem("IsAuth")) {
+        if (docSnap.exists()) {
+          const uid = currentUser.uid;
+          this.setState({ uid: uid });
+          document.getElementById("accountNavTitle").innerHTML =
+            docSnap.data().name;
+        }
       }
     }
-  }
-  setNavbar("fadeIn");
-};
+    setNavbar("fadeIn");
+  };
 
-const loadData = async () => {
-  onAuthStateChanged(auth, (user) => {
-    setData(user);
-  });
-};
+  loadData = async () => {
+    onAuthStateChanged(auth, (user) => {
+      this.setData(user);
+      console.log(user);
+    });
+  };
 
-loadData();
-
-export class NavBar extends Component {
   componentDidMount() {
     const width = window.innerWidth;
 
@@ -139,6 +144,13 @@ export class NavBar extends Component {
   }
 
   render() {
+    if (!loaded) {
+      console.log(loaded);
+      this.loadData();
+      loaded = true;
+      console.log(loaded);
+    }
+
     return (
       <React.Fragment>
         <div
@@ -155,9 +167,12 @@ export class NavBar extends Component {
             </a>
           </div>
           <div className="container__nav left-border" id="navContainer">
-            <a className="navbar__item" href="/boards">
-              <h1 className="nav__title no-highlight">Boards</h1>
-            </a>
+            <Link to="/boards">
+              <a className="navbar__item">
+                <h1 className="nav__title no-highlight">Boards</h1>
+              </a>
+            </Link>
+
             <a className="navbar__item">
               <h1 className="nav__title no-highlight">Other</h1>
             </a>
@@ -174,33 +189,44 @@ export class NavBar extends Component {
               className="container__navbar--account"
               id="accountNavContainer"
             >
-              <a className="navbar__item--account" id="accountLink">
-                <h1
-                  className="nav__title--account no-highlight"
-                  id="accountNavTitle"
-                ></h1>
-              </a>
+              <Link
+                to={{
+                  pathname: `/account/${this.state.uid}`,
+                }}
+              >
+                <a className="navbar__item--account">
+                  <h1
+                    className="nav__title--account no-highlight"
+                    id="accountNavTitle"
+                  ></h1>
+                </a>
+              </Link>
             </div>
           ) : (
             <div
               className="container__navbar--account"
               id="accountNavContainer"
             >
-              <a className="navbar__item--signup" href="/signup">
-                <h1 className="nav__title--signup no-highlight" id="loginNav">
-                  Sign Up
-                </h1>
-              </a>
+              <Link to="/signup">
+                <a className="navbar__item--signup">
+                  <h1 className="nav__title--signup no-highlight" id="loginNav">
+                    Sign Up
+                  </h1>
+                </a>
+              </Link>
+
               <a className="navbar__item--account">
                 <h1 className="nav__title--account no-highlight" id="">
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </h1>
               </a>
-              <a className="navbar__item--login" href="/login">
-                <h1 className="nav__title--login no-highlight" id="loginNav">
-                  Login
-                </h1>
-              </a>
+              <Link to="/login">
+                <a className="navbar__item--login">
+                  <h1 className="nav__title--login no-highlight" id="loginNav">
+                    Login
+                  </h1>
+                </a>
+              </Link>
             </div>
           )}
           <div id="menuContainer">
@@ -239,25 +265,37 @@ export class NavBar extends Component {
               }}
             >
               <li>
-                <a href="/">Home</a>
+                <Link to="/">
+                  <a>Home</a>
+                </Link>
               </li>
               <li>
-                <a href="/boards">Boards</a>
+                <Link to="/boards">
+                  <a>Boards</a>
+                </Link>
               </li>
               <li>
                 {isAuth ? (
-                  <a href="" id="accountMenuLink">
-                    Account
-                  </a>
+                  <Link
+                    to={{
+                      pathname: `/account/${this.state.uid}`,
+                    }}
+                  >
+                    <a id="accountMenuLink">Account</a>
+                  </Link>
                 ) : (
-                  <a href="/login">Login</a>
+                  <Link to="/login">
+                    <a>Login</a>
+                  </Link>
                 )}
               </li>
               <li>
                 {isAuth ? (
                   <a onClick={this.logOut}>Logout</a>
                 ) : (
-                  <a href="/singup">Sign Up</a>
+                  <Link to="/singup">
+                    <a>Sign Up</a>
+                  </Link>
                 )}
               </li>
             </ul>

@@ -5,9 +5,6 @@ import { auth } from "C:/Users/achen/myapp/src/firebase-config.js";
 export default function PasswordReset() {
   const [passwordError, setPasswordError] = useState("");
   const passwordResetEmail = () => {
-    sendPasswordResetEmail(auth, "achen10766@gmail.com")
-      .then(() => {})
-      .catch((error) => {});
     const user = auth.currentUser;
     if (user) {
       const providerID = user.providerData[0]["providerId"];

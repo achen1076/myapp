@@ -670,6 +670,7 @@ input:-webkit-autofill:active {
   text-align: center;
   font-size: 1em;
   margin-top: 10%;
+  margin-bottom: -10%;
 }
 
 /* Account Screen */
@@ -784,6 +785,13 @@ input:-webkit-autofill:active {
   margin-top: 1vh;
   margin-left: 10%;
   display: block;
+}
+
+.text__recovery--error {
+  color: #e73424;
+  text-align: center;
+  font-size: 1em;
+  margin-top: 10%;
 }
 
 /* Boards Screen */

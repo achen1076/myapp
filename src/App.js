@@ -17,7 +17,7 @@ export default function App() {
       <Route path="/" element={<IndexPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/recovery" element={<RecoveryPage />} />{" "}
+      <Route path="/recovery" element={<RecoveryPage />} />
       <Route path="/boards" element={<BoardsPage />} />
       <Route path="/account/:userId" element={<AccountPage />} />
     </Routes>
