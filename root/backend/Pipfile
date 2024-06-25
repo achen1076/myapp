@@ -15,6 +15,7 @@ pytz = "*"
 sqlparse = "*"
 psycopg2-binary = "*"
 python-dotenv = "*"
+openai = "*"
 
 [dev-packages]
 

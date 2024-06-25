@@ -8,23 +8,6 @@ import { auth, db } from "../firebase-config";
 import axios from "axios";
 
 export default class BoardScreen extends Component {
-  createBoard() {
-    if (auth.currentUser) {
-      const dataId: string = auth.currentUser.uid;
-      const docRef = doc(db, dataId, "board");
-      setDoc(docRef, {
-        // name: name,
-        // email: email,
-      });
-    }
-  }
-
-  state = { data: [] };
-
-  componentDidMount(): void {
-    let data: any;
-  }
-
   render() {
     return (
       <div className="gradient-overlay" id="gradientContainer">
@@ -32,12 +15,6 @@ export default class BoardScreen extends Component {
         <h1 className="header__account header" id="y">
           Boards
         </h1>
-        {this.state.data.map((output, id) => (
-          <div key={id}>
-            <h3 className="text__data">{output["employee"]}</h3>
-            <h3 className="text__data">{output["department"]}</h3>
-          </div>
-        ))}
       </div>
     );
   }
