@@ -9,12 +9,12 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     auth().catch(() => setIsAuthorized(false));
-  });
+  }, []);
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
     try {
-      const response = await api.post("/api/token/refresh/", {
+      const response = await api.post("/app/token/refresh/", {
         refresh: refreshToken,
       });
       if (response.status === 200) {
@@ -35,6 +35,7 @@ function ProtectedRoute({ children }) {
       setIsAuthorized(false);
       return;
     }
+
     const decoded = jwtDecode(token);
     const tokenExpiration = decoded.exp;
     const now = Date.now() / 1000;
@@ -48,6 +49,7 @@ function ProtectedRoute({ children }) {
   };
 
   if (IsAuthorized === null) {
+    return;
   }
 
   return IsAuthorized ? children : <Navigate to="/login" />;

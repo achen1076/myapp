@@ -23,19 +23,6 @@ export default class BoardScreen extends Component {
 
   componentDidMount(): void {
     let data: any;
-
-    axios
-      .get("http://localhost:8000")
-      .then((response) => {
-        data = response.data;
-        this.setState({
-          data: data,
-        });
-      })
-
-      .catch((error) => {
-        console.log(error);
-      });
   }
 
   render() {
