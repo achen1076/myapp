@@ -6,7 +6,6 @@ from openai import OpenAI
 from .models import *
 from .serializer import *
 
-OPENAI_SECRET_KEY = "sk-proj-JSmPBn5qimDUHZfLS5KVT3BlbkFJWpoKGm2eYrGD57jA9tre"
 
 
 class UserView(generics.CreateAPIView):
