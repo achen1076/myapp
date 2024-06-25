@@ -8,6 +8,7 @@ import { setDoc, doc, getDoc } from "firebase/firestore";
 import { auth, provider, db } from "../../firebase-config";
 import api from "../../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants.tsx";
+import LoadingDots from "../Loading.tsx";
 
 export default function LoginContainer() {
   const [errorMessageText, setErrorMessageText] = useState("");
@@ -35,7 +36,7 @@ export default function LoginContainer() {
 
   const signInWithGoogle = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         localStorage.setItem("IsAuth", JSON.stringify(true));
         const user = auth.currentUser;
         if (user) {
@@ -44,10 +45,14 @@ export default function LoginContainer() {
 
           const uid = user.uid;
           const docRef = doc(db, uid, "user");
-          setDoc(docRef, {
+          console.log("loading");
+          await setDoc(docRef, {
             name: user.displayName,
             email: user.email,
           });
+
+          // await handleAPI();
+          console.log("done loading");
           window.location.href = "/";
         }
       })
@@ -82,9 +87,14 @@ export default function LoginContainer() {
           setErrorMessageText("");
           errorDisplay.style.marginBottom = "";
           const user = userCredential.user;
-          console.log("loading");
+          const loadingDots = document.getElementById("loadingDots");
+          if (loadingDots) {
+            loadingDots.style.display = "flex";
+          }
           await setData(user);
-          console.log("done loading");
+          if (loadingDots) {
+            loadingDots.style.display = "none";
+          }
           window.location.href = "/";
         })
         .catch((error) => {
@@ -98,6 +108,7 @@ export default function LoginContainer() {
 
   return (
     <div className="container__login" id="loginContainer">
+      <LoadingDots />
       <h1 className="header__login-signup">Login</h1>
       <div className="field container__eplogin-signup">
         <label htmlFor="email" className="label__login-signup">
@@ -140,9 +151,9 @@ export default function LoginContainer() {
       >
         Login
       </button>
-      <button className="button__google-login" onClick={signInWithGoogle}>
+      {/* <button className="button__google-login" onClick={signInWithGoogle}>
         Sign in with Google
-      </button>
+      </button> */}
       <a href="/signup">
         <h3 className="text__login-signup">Need an account? Sign up here!</h3>
       </a>

@@ -3,11 +3,18 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  GoogleAuthProvider,
+  EmailAuthProvider,
+  linkWithCredential,
+  signInWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  deleteUser,
 } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import { auth, provider, db } from "../../firebase-config";
 import api from "../../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants.tsx";
+import LoadingDots from "../Loading.tsx";
 
 var valid = false;
 
@@ -44,9 +51,9 @@ export default function SignUpContainer() {
     }
   };
 
-  const signInWithGoogle = () => {
+  const signInWithGoogle = async () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         localStorage.setItem("IsAuth", JSON.stringify(true));
         const user = auth.currentUser;
         if (user) {
@@ -54,9 +61,9 @@ export default function SignUpContainer() {
           localStorage.setItem("UID", JSON.stringify(user.uid));
           const uid = user.uid;
           const docRef = doc(db, uid, "user");
-          setDoc(docRef, {
-            name: user.displayName,
-            email: user.email,
+          await setDoc(docRef, {
+            name: name,
+            email: email,
           });
         }
         window.location.href = "/";
@@ -79,15 +86,19 @@ export default function SignUpContainer() {
           localStorage.setItem("IsAuth", JSON.stringify(true));
           const dataId: string = user.uid;
           const docRef = doc(db, dataId, "user");
-          console.log("loading");
+          const loadingDots = document.getElementById("loadingDots");
+          if (loadingDots) {
+            loadingDots.style.display = "flex";
+          }
           await setDoc(docRef, {
             name: name,
             email: email,
           });
 
           await handleAPI();
-          console.log("done loading");
-
+          if (loadingDots) {
+            loadingDots.style.display = "none";
+          }
           window.location.href = "/";
         }
       })
@@ -99,6 +110,55 @@ export default function SignUpContainer() {
           );
         } else if (errorCode === "auth/email-already-in-use") {
           setAccountErrorText("Email already in use");
+          // try {
+          //   var credential = EmailAuthProvider.credential(email, password);
+          //   signInWithPopup(auth, provider)
+          //     .then((result) => {
+          //       localStorage.setItem("IsAuth", JSON.stringify(true));
+          //       const user = auth.currentUser;
+
+          //       if (user) {
+          //         if (user.email != email) {
+          //           localStorage.clear();
+          //           deleteUser(user);
+          //           const error = new Error("different emails");
+          //           error["code"] = "auth/different-email";
+          //           throw error;
+          //         }
+          //         localStorage.setItem(
+          //           "Name",
+          //           JSON.stringify(user.displayName)
+          //         );
+          //         localStorage.setItem("UID", JSON.stringify(user.uid));
+          //         linkWithCredential(user, credential).then((user) => {
+          //           signInWithEmailAndPassword(auth, email, password)
+          //             .then(async (userCredential) => {
+          //               // Signed in
+          //               localStorage.setItem("IsAuth", JSON.stringify(true));
+          //               const user = userCredential.user;
+          //               localStorage.setItem("UID", JSON.stringify(user.uid));
+          //               localStorage.setItem(
+          //                 "Name",
+          //                 JSON.stringify(user.displayName)
+          //               );
+          //               window.location.href = "/";
+          //             })
+          //             .catch((error) => {
+          //               console.log(error.code);
+          //               setAccountErrorText(
+          //                 "Google email different than entered email"
+          //               );
+          //             });
+          //         });
+          //       }
+          //     })
+          //     .catch((error) => {
+          //       setAccountErrorText("Account already exists");
+          //     });
+          // } catch (error) {
+          //   console.log("Account linking error", error);
+          //   setAccountErrorText("Email already in use");
+          // }
         } else if (errorCode === "auth/invalid-email") {
           setAccountErrorText("Invalid email");
         }
@@ -135,6 +195,7 @@ export default function SignUpContainer() {
   return (
     <div>
       <div className="container__signup" id="signUpContainer">
+        <LoadingDots />
         <h1 className="header__login-signup">Create Your Account</h1>
         <div className="field container__eplogin-signup">
           <label htmlFor="name" className="label__login-signup">
@@ -213,9 +274,9 @@ export default function SignUpContainer() {
         >
           Create Account
         </button>
-        <button className="button__google-signup" onClick={onClickGoogle}>
+        {/* <button className="button__google-signup" onClick={onClickGoogle}>
           Sign up with Google
-        </button>
+        </button> */}
         <a href="/login">
           <h3 className="text__login-signup">
             Already have an account? Log in here!

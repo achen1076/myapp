@@ -5,6 +5,7 @@ import { NavBar } from "../components/navbar/navbar.tsx";
 import { minWidth } from "../utils/constants.tsx";
 import NameText from "../components/account/nameText.tsx";
 import PasswordReset from "../components/account/passwordReset.tsx";
+import LoadingDots from "../components/Loading.tsx";
 
 const onResize = () => {
   const width = window.innerWidth;

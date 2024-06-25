@@ -98,7 +98,10 @@ export class NavBar extends Component {
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
         >
-          <div className="site_title__navbar" id="titleNavContainer">
+          <div
+            className="site_title__navbar right-border"
+            id="titleNavContainer"
+          >
             <Link to="/">
               <a className="navbar__item--main">
                 <h1 className="nav__title no-highlight" id="mainTitle">
@@ -107,7 +110,7 @@ export class NavBar extends Component {
               </a>
             </Link>
           </div>
-          <div className="container__nav left-border" id="navContainer">
+          <div className="container__nav " id="navContainer">
             <Link to="/boards">
               <a className="navbar__item">
                 <h1 className="nav__title no-highlight">Boards</h1>
