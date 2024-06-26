@@ -802,6 +802,23 @@ input:-webkit-autofill:active {
 
 .text__data {
   font-size: 2em;
-  position: relative;
+  position: absolute;
   text-align: center;
+}
+
+.input__ticker {
+  position: relative;
+  left: 20%;
+  color: black;
+}
+
+.test-button {
+  position: relative;
+  background: white;
+  border: 1px solid white;
+  color: rebeccapurple;
+}
+
+.image-test {
+  position: relative;
 }

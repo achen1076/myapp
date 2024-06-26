@@ -22,7 +22,6 @@ export default function LoginContainer() {
         const username = localStorageUID.replace(/"/g, "");
         const response = await api.post("/app/token/", {
           username: username,
-          email: email,
           password: password,
         });
 

@@ -16,6 +16,14 @@ sqlparse = "*"
 psycopg2-binary = "*"
 python-dotenv = "*"
 openai = "*"
+yfinance = "*"
+pandas = "*"
+tensorflow = "*"
+scikit-learn = "*"
+numpy = "*"
+matplotlib = "*"
+prophet = "*"
+requests = "*"
 
 [dev-packages]
 

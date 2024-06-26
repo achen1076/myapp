@@ -27,6 +27,5 @@ urlpatterns = [
     path('app/token/refresh/', TokenRefreshView.as_view(), name="refresh"),
     path('app-auth/', include("rest_framework.urls")),
     path("app/", include("app.urls")),
-
     # path('', TemplateView.as_view(template_name='index.html'))
 ]
