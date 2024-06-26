@@ -113,7 +113,7 @@ export class NavBar extends Component {
           <div className="container__nav " id="navContainer">
             <Link to="/boards">
               <a className="navbar__item">
-                <h1 className="nav__title no-highlight">Boards</h1>
+                <h1 className="nav__title no-highlight">Data</h1>
               </a>
             </Link>
 
@@ -204,7 +204,7 @@ export class NavBar extends Component {
               </li>
               <li>
                 <Link to="/boards">
-                  <a>Boards</a>
+                  <a>Data</a>
                 </Link>
               </li>
               <li>
