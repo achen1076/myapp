@@ -6,19 +6,22 @@ import api from "../api.js";
 function Image() {
   const [image, setImage] = useState([]);
   const [userInput, setUserInput] = useState("");
-  const [source, setSource] = useState("");
 
   useEffect(() => {
     getURL();
   }, []);
+
+  const processData = (data: any) => {
+    console.log(data);
+  };
 
   const getURL = () => {
     api
       .get("/app/notes/")
       .then((res) => res.data)
       .then((dat) => {
+        processData(dat[0]["result"]);
         setImage(dat);
-        setSource("media_public/chart.svg");
       })
       .catch((err) => alert(err));
   };

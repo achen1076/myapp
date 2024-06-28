@@ -18,7 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SentimentAnalysisSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Note
-        fields = ["id", "user_input", "created_at", "author"]
+        fields = ["id", "user_input", "created_at", "author", "result"]
         extra_kwargs = {"author": {"read_only": True}}
