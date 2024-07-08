@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     'app',
     'rest_framework',
     'corsheaders',
-    ]
-    
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,8 +61,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',  
-    'corsheaders.middleware.CorsMiddleware',  
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 
@@ -75,7 +75,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-           "C:/Users/achen/myapp/root/frontend/build"
+            "C:/Users/achen/myapp/root/frontend/build"
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -97,10 +97,17 @@ WSGI_APPLICATION = 'ai.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'djangoblog',
+        'USER': 'admin',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': ''
     }
 }
+
+# 'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 
 
 # Password validation
@@ -141,7 +148,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     "C:/Users/achen/myapp/root/frontend/build/static"
- 
+
 ]
 
 # Default primary key field type

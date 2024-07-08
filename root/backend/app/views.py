@@ -24,7 +24,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 
-client = openai.OpenAI()
+# client = openai.OpenAI()
 
 
 class UserView(generics.CreateAPIView):
