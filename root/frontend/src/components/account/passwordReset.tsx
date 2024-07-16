@@ -9,7 +9,7 @@ export default function PasswordReset() {
     if (user) {
       const providerID = user.providerData[0]["providerId"];
       if (providerID !== "google.com") {
-        const email: string = JSON.stringify(user.email);
+        const email = user.email ?? "";
         sendPasswordResetEmail(auth, email)
           .then(() => {
             setPasswordError(
@@ -17,6 +17,7 @@ export default function PasswordReset() {
             );
           })
           .catch((error) => {
+            console.log(error);
             setPasswordError("Something went wrong, please try again later");
           });
       } else if (providerID === "google.com") {

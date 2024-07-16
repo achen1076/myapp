@@ -106,7 +106,15 @@ export default function LoginContainer() {
   };
 
   return (
-    <div className="container__login" id="loginContainer">
+    <div
+      className="container__login"
+      id="loginContainer"
+      onKeyUp={(e) => {
+        if (e.key === "Enter") {
+          signInWithEmail();
+        }
+      }}
+    >
       <LoadingDots />
       <h1 className="header__login-signup">Login</h1>
       <div className="field container__eplogin-signup">

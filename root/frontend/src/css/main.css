@@ -323,7 +323,7 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  margin-top: 5vh;
+  margin-top: 10vh;
   border-radius: calc((1.5vw + 1.5vh) / 2);
 }
 
@@ -584,7 +584,7 @@ input:-webkit-autofill:active {
   height: 55vh;
   background-color: rgba(255, 255, 255, 0.2);
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -30%);
   top: max(50%, 300px);
   left: 50%;
   border-radius: calc((1.5vw + 1.5vh) / 2);
@@ -620,7 +620,7 @@ input:-webkit-autofill:active {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  margin-top: 5vh;
+  margin-top: 10vh;
   border-radius: calc((1.5vw + 1.5vh) / 2);
 }
 
@@ -773,7 +773,7 @@ input:-webkit-autofill:active {
   position: relative;
   margin-top: 1vh;
   margin-bottom: -2vh;
-  height: 1vh;
+  height: auto;
   padding: 0;
 }
 
@@ -822,3 +822,6 @@ input:-webkit-autofill:active {
 .image-test {
   position: relative;
 }
+
+/* Profile Page */
+

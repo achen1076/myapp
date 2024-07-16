@@ -20,6 +20,7 @@ export default function setNavbar(event: string) {
       menuContainer.style.display = "inline-block";
       menuIcon.style.display = "inline-block";
       titleNavContainer.style.width = "80vw";
+      titleNavContainer.classList.remove("right-border");
       navContainer.style.animation = `0.5s ${event} forwards`;
     }
     if (width > minWidth) {
@@ -29,6 +30,7 @@ export default function setNavbar(event: string) {
       navContainer.style.animation = `0.5s ${event} forwards`;
       menuIcon.style.display = "none";
       titleNavContainer.style.width = "20vw";
+      titleNavContainer.classList.add("right-border");
     }
   }
 }
