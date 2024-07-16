@@ -24,6 +24,7 @@ numpy = "*"
 matplotlib = "*"
 prophet = "*"
 requests = "*"
+plotly = "*"
 
 [dev-packages]
 
