@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from app.views import * 
+from app.views import *
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -27,5 +27,5 @@ urlpatterns = [
     path('app/token/refresh/', TokenRefreshView.as_view(), name="refresh"),
     path('app-auth/', include("rest_framework.urls")),
     path("app/", include("app.urls")),
-    # path('', TemplateView.as_view(template_name='index.html'))
+    path('', TemplateView.as_view(template_name='index.html'))
 ]
