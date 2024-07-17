@@ -24,6 +24,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 
+def blank_page(request):
+    return render()
+
 # client = openai.OpenAI()
 
 
