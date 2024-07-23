@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { NavBar } from "../components/navbar/navbar.tsx";
-
-import SignUpContainer from "../components/signup/signupContainer.tsx";
+import { NavBar } from "../components/organisms/navbar/navbar.tsx";
+import SignUpContainer from "../components/organisms/signup/signupContainer.tsx";
 
 export default class SignUpScreen extends Component {
   render() {

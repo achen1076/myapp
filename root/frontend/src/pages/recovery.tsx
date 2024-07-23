@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { NavBar } from "../components/navbar/navbar.tsx";
-import RecoveryContainer from "../components/recovery/recoveryContainer.tsx";
+import { NavBar } from "../components/organisms/navbar/navbar.tsx";
+import RecoveryContainer from "../components/organisms/recovery/recoveryContainer.tsx";
 
 export default class RecoveryScreen extends Component {
   render() {

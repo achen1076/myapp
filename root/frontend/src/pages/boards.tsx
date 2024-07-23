@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from "react";
-import { NavBar } from "../components/navbar/navbar.tsx";
+import { NavBar } from "../components/organisms/navbar/navbar.tsx";
 import axios from "axios";
 import api from "../api.js";
 

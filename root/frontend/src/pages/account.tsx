@@ -1,11 +1,11 @@
 import React, { Component, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { NavBar } from "../components/navbar/navbar.tsx";
+import { NavBar } from "../components/organisms/navbar/navbar.tsx";
 import { minWidth } from "../utils/constants.tsx";
-import NameText from "../components/account/nameText.tsx";
-import PasswordReset from "../components/account/passwordReset.tsx";
-import LoadingDots from "../components/Loading.tsx";
+import NameText from "../components/molecules/account/nameText.tsx";
+import PasswordReset from "../components/molecules/account/passwordReset.tsx";
+import LoadingDots from "../components/atoms/Loading.tsx";
 
 const onResize = () => {
   const width = window.innerWidth;

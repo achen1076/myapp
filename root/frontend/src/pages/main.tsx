@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
-import { NavBar } from "../components/navbar/navbar.tsx";
+import { NavBar } from "../components/organisms/navbar/navbar.tsx";
 import Typed from "typed.js";
-
+import Button from "../components/atoms/Button.tsx";
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -54,8 +54,8 @@ export default class MainScreen extends Component {
               <TypedText /> <br />
               Tool
             </h1>
-           
           </div>
+          <Button />
         </div>
         <script></script>
       </React.Fragment>

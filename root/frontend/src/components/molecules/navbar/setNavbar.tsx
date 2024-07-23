@@ -1,4 +1,4 @@
-import { minWidth } from "../../utils/constants.tsx";
+import { minWidth } from "../../../utils/constants.tsx";
 
 export default function setNavbar(event: string) {
   const width = window.innerWidth;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase-config.js";
+import { auth, db } from "../../../firebase-config.js";
 import { User, onAuthStateChanged } from "firebase/auth";
-import setNavbar from "./setNavbar.tsx";
+import setNavbar from "../../molecules/navbar/setNavbar.tsx";
 
 export function AccountAuth() {
   const [accountName, setAccountName] = useState("");

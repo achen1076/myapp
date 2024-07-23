@@ -11,10 +11,10 @@ import {
   deleteUser,
 } from "firebase/auth";
 import { setDoc, doc, getDoc } from "firebase/firestore";
-import { auth, provider, db } from "../../firebase-config";
-import api from "../../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants.tsx";
-import LoadingDots from "../Loading.tsx";
+import { auth, provider, db } from "../../../firebase-config.js";
+import api from "../../../api.js";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../utils/constants.tsx";
+import LoadingDots from "../../atoms/Loading.tsx";
 
 var valid = false;
 

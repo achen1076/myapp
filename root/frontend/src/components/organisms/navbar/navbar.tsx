@@ -2,10 +2,10 @@ import React, { Component, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setDoc, doc, getDoc } from "firebase/firestore";
-import { auth, provider, db } from "../../firebase-config.js";
+import { auth, provider, db } from "../../../firebase-config.js";
 import { User, onAuthStateChanged, signOut } from "firebase/auth";
-import { minWidth } from "../../utils/constants.tsx";
-import setNavbar from "./setNavbar.tsx";
+import { minWidth } from "../../../utils/constants.tsx";
+import setNavbar from "../../molecules/navbar/setNavbar.tsx";
 import { AccountAuth, AccountAuthMenu } from "./accountAuth.tsx";
 
 var isAuth = localStorage.getItem("IsAuth");

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { auth, db } from "../../firebase-config";
+import { auth, db } from "../../../firebase-config.js";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth/cordova";
-import { minWidth } from "../../utils/constants.tsx";
+import { minWidth } from "../../../utils/constants.tsx";
 
 export default function NameText() {
   const [nameText, setNameText] = useState("");
