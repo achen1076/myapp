@@ -3,7 +3,6 @@ import { NavBar } from "../components/organisms/navbar/navbar.tsx";
 import Typed from "typed.js";
 import Button from "../components/atoms/Button.tsx";
 
-
 document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("mousemove", function (e) {
     var x: number;
@@ -41,8 +40,6 @@ function TypedText() {
 }
 
 export default class MainScreen extends Component {
-
-
   render() {
     return (
       <React.Fragment>

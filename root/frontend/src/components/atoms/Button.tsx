@@ -14,7 +14,8 @@ const Button: React.FC<ButtonProps> = ({ className, disabled, ...props }) => {
   return (
     <button
       className={cn(
-        "bg-red-500",
+        "button__basic",
+        "relative",
         { "cursor-not-allowed": disabled },
         className
       )}
