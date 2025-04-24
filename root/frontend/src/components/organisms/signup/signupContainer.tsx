@@ -4,6 +4,13 @@ import { useAuth } from "../../../contexts/AuthContext.tsx";
 import LoadingDots from "../../atoms/Loading.tsx";
 import Input from "../../atoms/Input.tsx";
 import Button from "../../atoms/Button.tsx";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../../firebase-config";
 
 export default function SignUpContainer() {
   const navigate = useNavigate();
@@ -74,11 +81,34 @@ export default function SignUpContainer() {
     try {
       setIsLoading(true);
       setError("");
-      await loginWithGoogle();
-      navigate("/");
+
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      if (user) {
+        // Store user data in localStorage
+        localStorage.setItem("IsAuth", JSON.stringify(true));
+        localStorage.setItem("Name", user.displayName || "");
+        localStorage.setItem("UID", JSON.stringify(user.uid));
+
+        // Store additional user data in Firestore
+        const docRef = doc(db, user.uid, "user");
+        await setDoc(docRef, {
+          name: user.displayName,
+          email: user.email,
+          createdAt: new Date().toISOString(),
+        });
+
+        window.location.href = "/";
+      }
     } catch (error: any) {
       console.error("Google signup error:", error);
-      setError("Failed to sign in with Google");
+      if (error.code === "auth/popup-closed-by-user") {
+        setError("Sign-in popup was closed");
+      } else {
+        setError("Failed to sign in with Google");
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  signInWithPopup,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../../firebase-config";
@@ -42,6 +43,11 @@ export default function LoginContainer() {
     try {
       setIsLoading(true);
       setError("");
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      localStorage.setItem("IsAuth", JSON.stringify(true));
+      await setCurrentUser(user);
       window.location.href = "/";
     } catch (error: any) {
       console.error("Google login error:", error);
