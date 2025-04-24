@@ -1,81 +1,31 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../../contexts/AuthContext.tsx";
-import LoadingDots from "../../atoms/Loading.tsx";
-import Input from "../../atoms/Input.tsx";
+import { register } from "../../../api.tsx";
 import Button from "../../atoms/Button.tsx";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import Input from "../../atoms/Input.tsx";
+import LoadingDots from "../../atoms/Loading.tsx";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "../../../firebase-config";
+import { doc, setDoc } from "firebase/firestore";
+
+interface SignupError {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+}
 
 export default function SignUpContainer() {
   const navigate = useNavigate();
-  const { register, loginWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    // Validate form
-    if (!name) {
-      setError("Please enter your name");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!email) {
-      setError("Please enter your email");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!password) {
-      setError("Please enter a password");
-      setIsLoading(false);
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      setIsLoading(false);
-      return;
-    }
-
-    if (password !== passwordConfirm) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-    try {
-      await register({ name, email, password });
-      navigate("/");
-    } catch (error: any) {
-      console.error("Signup error:", error);
-      if (error.code === "auth/weak-password") {
-        setError("Password too weak, please enter at least 6 characters");
-      } else if (error.code === "auth/email-already-in-use") {
-        setError("Email already in use");
-      } else if (error.code === "auth/invalid-email") {
-        setError("Invalid email");
-      } else {
-        setError("An error occurred during registration");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleGoogleSignup = async () => {
     try {
@@ -114,122 +64,191 @@ export default function SignUpContainer() {
     }
   };
 
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    if (name === "") {
+      setError("Please enter your name");
+      setIsLoading(false);
+      return;
+    }
+
+    if (username === "") {
+      setError("Please enter your username");
+      setIsLoading(false);
+      return;
+    }
+
+    if (email === "") {
+      setError("Please enter your email");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password === "") {
+      setError("Please enter a password");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await register({ name, username, email, password });
+      navigate("/"); // Redirect to home page after successful registration
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        const error = err as SignupError;
+        setError(
+          error.response?.data?.error || "An error occurred during registration"
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div
-      className="w-1/3
-    h-auto
-    bg-gray-900
-    absolute
-    left-1/2
-    top-[max(50%,_300px)]
-    -translate-x-1/2
-    -translate-y-[30%]
-    rounded-[calc((1.5vw+1.5vh)/2)]
-    border-[0.3em] border-white/5
-    inline-block
-    px-[2vw]
-    py-[2vh]
-    min-w-[300px]
-    max-w-[500px]
-    min-h-[600px]
-    overflow-hidden"
-    >
-      {isLoading && <LoadingDots />}
-      <h1 className="text-3xl font-bold text-white text-center mb-8">
-        Create your account
-      </h1>
-      <div className="w-full max-w-md space-y-8">
-        <form onSubmit={handleSignup} className="mt-8 space-y-6">
-          <div className="space-y-4">
-            <Input
-              label="Name"
-              id="name"
-              value={name}
-              variant="login"
-              placeholder="Enter your name"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setName(e.target.value)
-              }
-              required
-            />
+    <div className="fixed inset-0 bg-black/50">
+      <div
+        className="w-1/3
+        h-auto
+        bg-gray-900
+        absolute
+        left-1/2
+        top-[max(50%,_300px)]
+        -translate-x-1/2
+        -translate-y-[30%]
+        rounded-[calc((1.5vw+1.5vh)/2)]
+        border-[0.3em] border-white/5
+        px-[2vw]
+        py-[2vh]
+        min-w-[300px]
+        max-w-[500px]
+        space-y-4"
+      >
+        {isLoading && <LoadingDots />}
+        <h1 className="text-3xl font-bold text-white text-center">
+          Create Account
+        </h1>
+        <div className="space-y-4">
+          <Input
+            id="name"
+            label="Name"
+            variant="login"
+            placeholder="Enter your name..."
+            autoComplete="none"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            fullWidth
+          />
+          <Input
+            id="username"
+            label="Username"
+            variant="login"
+            placeholder="Enter your username..."
+            autoComplete="none"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            fullWidth
+          />
+          <Input
+            id="email"
+            label="Email"
+            variant="login"
+            placeholder="Enter your email..."
+            autoComplete="none"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+          />
+          <Input
+            id="password"
+            label="Password"
+            variant="login"
+            placeholder="Enter your password"
+            autoComplete="none"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+          />
+          <Input
+            id="confirmPassword"
+            label="Confirm Password"
+            variant="login"
+            placeholder="Confirm your password"
+            autoComplete="none"
+            type="password"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            fullWidth
+          />
+        </div>
+        {error && (
+          <div className="mt-4 px-4 py-2 bg-red-500/10 rounded-lg">
+            <p className="text-sm text-red-500 text-center">{error}</p>
+          </div>
+        )}
+        <div className="space-y-4">
+          <Button
+            type="submit"
+            variant="secondary"
+            size="lg"
+            fullWidth
+            loading={isLoading}
+            onClick={(e) => {
+              e.preventDefault();
+              handleSignup(e as unknown as React.FormEvent<HTMLFormElement>);
+            }}
+          >
+            Sign Up
+          </Button>
 
-            <Input
-              label="Email"
-              id="email"
-              type="email"
-              value={email}
-              variant="login"
-              placeholder="Enter your email"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
-              required
-            />
-
-            <Input
-              label="Password"
-              id="password"
-              type="password"
-              value={password}
-              variant="login"
-              placeholder="Enter your password"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-              required
-              minLength={6}
-            />
-
-            <Input
-              label="Confirm Password"
-              id="confirmPassword"
-              type="password"
-              variant="login"
-              placeholder="Confirm your password"
-              value={passwordConfirm}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPasswordConfirm(e.target.value)
-              }
-              required
-            />
-
-            {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            )}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-gray-900 text-gray-400">Or</span>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <Button
-              type="submit"
-              disabled={isLoading}
-              fullWidth
-              variant="secondary"
-            >
-              Create Account
-            </Button>
+          <Button
+            type="button"
+            variant="google"
+            size="lg"
+            fullWidth
+            loading={isLoading}
+            onClick={handleGoogleSignup}
+          >
+            Sign up with Google
+          </Button>
+        </div>
 
-            <Button
-              type="button"
-              onClick={handleGoogleSignup}
-              disabled={isLoading}
-              fullWidth
-              variant="secondary"
-            >
-              Sign up with Google
-            </Button>
-          </div>
-
-          <div className="text-center">
-            <Link
-              to="/login"
-              className="text-sm text-blue-600 hover:text-blue-500"
-            >
-              Already have an account? Log in here
+        <div className="text-center mt-4">
+          <span className="text-gray-400">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500 hover:text-blue-400">
+              Login here
             </Link>
-          </div>
-        </form>
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -121,12 +121,11 @@ export default function LoginContainer() {
       min-h-[600px]
       overflow-hidden"
     >
-      {isLoading && <LoadingDots />}
-      <h1 className="text-3xl font-bold text-white text-center mb-8">
-        Welcome Back
-      </h1>
-
       <form onSubmit={handleEmailLogin} className="space-y-6">
+        {isLoading && <LoadingDots />}
+        <h1 className="text-3xl font-bold text-white text-center mb-8">
+          Welcome Back
+        </h1>
         <div className="space-y-4">
           <Input
             label="Email"
@@ -176,7 +175,7 @@ export default function LoginContainer() {
             onClick={handleGoogleLogin}
             disabled={isLoading}
             fullWidth
-            variant="secondary"
+            variant="google"
           >
             Sign in with Google
           </Button>
