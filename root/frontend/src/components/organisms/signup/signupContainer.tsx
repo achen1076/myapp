@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { register } from "../../../api.tsx";
+import { useAuth } from "../../../contexts/AuthContext.tsx";
 import Button from "../../atoms/Button.tsx";
 import Input from "../../atoms/Input.tsx";
 import LoadingDots from "../../atoms/Loading.tsx";
@@ -18,11 +18,18 @@ interface SignupError {
 
 export default function SignUpContainer() {
   const navigate = useNavigate();
+  const { register, currentUser } = useAuth();
+
+  useEffect(() => {
+    if (localStorage.getItem("IsAuth")) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -75,12 +82,6 @@ export default function SignUpContainer() {
       return;
     }
 
-    if (username === "") {
-      setError("Please enter your username");
-      setIsLoading(false);
-      return;
-    }
-
     if (email === "") {
       setError("Please enter your email");
       setIsLoading(false);
@@ -106,7 +107,11 @@ export default function SignUpContainer() {
     }
 
     try {
-      await register({ name, username, email, password });
+      const result = await register({
+        name,
+        email,
+        password,
+      });
       navigate("/"); // Redirect to home page after successful registration
     } catch (err) {
       if (err instanceof Error) {
@@ -156,16 +161,7 @@ export default function SignUpContainer() {
             onChange={(e) => setName(e.target.value)}
             fullWidth
           />
-          <Input
-            id="username"
-            label="Username"
-            variant="login"
-            placeholder="Enter your username..."
-            autoComplete="none"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            fullWidth
-          />
+
           <Input
             id="email"
             label="Email"

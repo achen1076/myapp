@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext.tsx";
+import Button from "../../atoms/Button.tsx";
+import Input from "../../atoms/Input.tsx";
+import LoadingDots from "../../atoms/Loading.tsx";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../utils/constants.tsx";
+import api from "../../../api.tsx";
+import { User } from "firebase/auth";
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -8,13 +15,6 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../../firebase-config";
-import LoadingDots from "../../atoms/Loading.tsx";
-import Input from "../../atoms/Input.tsx";
-import Button from "../../atoms/Button.tsx";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../utils/constants.tsx";
-import api from "../../../api.tsx";
-import { useAuth } from "../../../contexts/AuthContext.tsx";
-import { User } from "firebase/auth";
 
 interface LoginError {
   error?: string;
@@ -26,6 +26,12 @@ export default function LoginContainer() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("IsAuth")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const setCurrentUser = async (user: User | null) => {
     if (user && localStorage.getItem("IsAuth")) {
@@ -121,11 +127,12 @@ export default function LoginContainer() {
       min-h-[600px]
       overflow-hidden"
     >
+      {isLoading && <LoadingDots />}
+      <h1 className="text-3xl font-bold text-white text-center mb-8">
+        Welcome Back
+      </h1>
+
       <form onSubmit={handleEmailLogin} className="space-y-6">
-        {isLoading && <LoadingDots />}
-        <h1 className="text-3xl font-bold text-white text-center mb-8">
-          Welcome Back
-        </h1>
         <div className="space-y-4">
           <Input
             label="Email"
@@ -190,13 +197,13 @@ export default function LoginContainer() {
           </Button>
         </div>
 
-        <div className="text-center">
-          <Link
-            to="/signup"
-            className="text-sm text-blue-600 hover:text-blue-500"
-          >
-            Need an account? Sign up here
-          </Link>
+        <div className="text-center mt-4">
+          <span className="text-gray-400">
+            Need an account?{" "}
+            <Link to="/signup" className="text-blue-500 hover:text-blue-400">
+              Sign up here
+            </Link>
+          </span>
         </div>
       </form>
     </div>

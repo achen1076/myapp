@@ -29,7 +29,7 @@ function TypedText() {
 
   React.useEffect(() => {
     const typed = new Typed(typedElement.current, {
-      strings: ["Notes", "Management", "Organization", "Planning"],
+      strings: ["Nanog", "Noggy", "Nog", "Nanny"],
       typeSpeed: 50,
       backSpeed: 50,
       loop: true,
@@ -114,48 +114,10 @@ export default class MainScreen extends Component {
           <NavBar />
           <div className="main__title-container">
             <h1 className="main__main-heading extra-margin-bottom">
-              The Best <br />
+              Send Flux To <br />
               <TypedText /> <br />
-              Tool
+              Please
             </h1>
-          </div>
-          <div
-            className="main__button-container"
-            style={{
-              position: "relative",
-              display: "flex",
-              gap: "1rem",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={this.handleTestClick}
-              >
-                Test Connection
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={this.handleInsertData}
-              >
-                Insert Test User
-              </Button>
-              <Button variant="primary" size="lg" onClick={this.handleGetData}>
-                Get All Users
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={this.handleClearData}
-              >
-                Clear Database
-              </Button>
-            </div>
-            <Textbox />
           </div>
         </div>
       </React.Fragment>
