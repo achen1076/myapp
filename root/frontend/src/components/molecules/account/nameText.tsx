@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { auth, db } from "../../../firebase-config.js";
+import { auth, db } from "../../../firebase-config";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth/cordova";
 import { minWidth } from "../../../utils/constants.tsx";

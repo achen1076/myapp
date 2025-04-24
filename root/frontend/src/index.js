@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./css/global.css";
 import "./css/main.css";
-import App from "./App.js";
+import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 
 // da entry point!
