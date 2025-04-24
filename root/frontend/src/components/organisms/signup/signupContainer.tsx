@@ -142,7 +142,7 @@ export default function SignUpContainer() {
         space-y-4"
       >
         {isLoading && <LoadingDots />}
-        <h1 className="text-3xl font-bold text-white text-center">
+        <h1 className="text-3xl font-bold text-white text-center mt-2 mb-2">
           Create Account
         </h1>
         <div className="space-y-4">
