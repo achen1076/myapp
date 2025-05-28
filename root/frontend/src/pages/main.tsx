@@ -29,7 +29,7 @@ function TypedText() {
 
   React.useEffect(() => {
     const typed = new Typed(typedElement.current, {
-      strings: ["Nanog", "Noggy", "Nog", "Nanny"],
+      strings: ["Planning", "Management", "Organization", "Notes"],
       typeSpeed: 50,
       backSpeed: 50,
       loop: true,
@@ -114,9 +114,9 @@ export default class MainScreen extends Component {
           <NavBar />
           <div className="main__title-container">
             <h1 className="main__main-heading extra-margin-bottom">
-              Send Flux To <br />
+              The Best<br />
               <TypedText /> <br />
-              Please
+              Tool
             </h1>
           </div>
         </div>
