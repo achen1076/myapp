@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import { NavBar } from "../components/organisms/navbar/navbar.tsx";
 import axios from "axios";
-import api from "../api.js";
+import api from "../api.tsx";
 
 function Image() {
   const [image, setImage] = useState([]);

@@ -1,287 +1,250 @@
-import React, { useState } from "react";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  EmailAuthProvider,
-  linkWithCredential,
-  signInWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
-  deleteUser,
-} from "firebase/auth";
-import { setDoc, doc, getDoc } from "firebase/firestore";
-import { auth, provider, db } from "../../../firebase-config.js";
-import api from "../../../api.js";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../utils/constants.tsx";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext.tsx";
+import Button from "../../atoms/Button.tsx";
+import Input from "../../atoms/Input.tsx";
 import LoadingDots from "../../atoms/Loading.tsx";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, db } from "../../../firebase-config";
+import { doc, setDoc } from "firebase/firestore";
 
-var valid = false;
+interface SignupError {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+}
 
 export default function SignUpContainer() {
-  const [accountErrorText, setAccountErrorText] = useState("");
+  const navigate = useNavigate();
+  const { register, currentUser } = useAuth();
+
+  useEffect(() => {
+    if (localStorage.getItem("IsAuth")) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const handleAPI = async () => {
+  const handleGoogleSignup = async () => {
     try {
-      const localStorageUID = localStorage.getItem("UID");
-      if (localStorageUID) {
-        const username = localStorageUID.replace(/"/g, "");
-        const response = await api.post("/app/user/register/", {
-          username: username,
-          email: email,
-          password: password,
-        });
+      setIsLoading(true);
+      setError("");
 
-        const loginResponse = await api.post("/app/token/", {
-          username: username,
-          email: email,
-          password: password,
-        });
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-        localStorage.setItem(ACCESS_TOKEN, loginResponse.data.access);
-        localStorage.setItem(REFRESH_TOKEN, loginResponse.data.refresh);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  const signInWithGoogle = async () => {
-    signInWithPopup(auth, provider)
-      .then(async (result) => {
+      if (user) {
+        // Store user data in localStorage
         localStorage.setItem("IsAuth", JSON.stringify(true));
-        const user = auth.currentUser;
-        if (user) {
-          localStorage.setItem("Name", JSON.stringify(user.displayName));
-          localStorage.setItem("UID", JSON.stringify(user.uid));
-          const uid = user.uid;
-          const docRef = doc(db, uid, "user");
-          await setDoc(docRef, {
-            name: name,
-            email: email,
-          });
-        }
+        localStorage.setItem("Name", user.displayName || "");
+        localStorage.setItem("UID", JSON.stringify(user.uid));
+
+        // Store additional user data in Firestore
+        const docRef = doc(db, user.uid, "user");
+        await setDoc(docRef, {
+          name: user.displayName,
+          email: user.email,
+          createdAt: new Date().toISOString(),
+        });
+
         window.location.href = "/";
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const createAccount = async () => {
-    const auth = getAuth();
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        if (user) {
-          localStorage.setItem("Name", name);
-          localStorage.setItem("UID", JSON.stringify(user.uid));
-          localStorage.setItem("IsAuth", JSON.stringify(true));
-          const dataId: string = user.uid;
-          const docRef = doc(db, dataId, "user");
-          const loadingDots = document.getElementById("loadingDots");
-          if (loadingDots) {
-            loadingDots.style.display = "flex";
-          }
-          await setDoc(docRef, {
-            name: name,
-            email: email,
-          });
-
-          await handleAPI();
-          if (loadingDots) {
-            loadingDots.style.display = "none";
-          }
-          window.location.href = "/";
-        }
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        if (errorCode === "auth/weak-password") {
-          setAccountErrorText(
-            "Password too weak, please enter atleast 6 characters"
-          );
-        } else if (errorCode === "auth/email-already-in-use") {
-          setAccountErrorText("Email already in use");
-          // try {
-          //   var credential = EmailAuthProvider.credential(email, password);
-          //   signInWithPopup(auth, provider)
-          //     .then((result) => {
-          //       localStorage.setItem("IsAuth", JSON.stringify(true));
-          //       const user = auth.currentUser;
-
-          //       if (user) {
-          //         if (user.email != email) {
-          //           localStorage.clear();
-          //           deleteUser(user);
-          //           const error = new Error("different emails");
-          //           error["code"] = "auth/different-email";
-          //           throw error;
-          //         }
-          //         localStorage.setItem(
-          //           "Name",
-          //           JSON.stringify(user.displayName)
-          //         );
-          //         localStorage.setItem("UID", JSON.stringify(user.uid));
-          //         linkWithCredential(user, credential).then((user) => {
-          //           signInWithEmailAndPassword(auth, email, password)
-          //             .then(async (userCredential) => {
-          //               // Signed in
-          //               localStorage.setItem("IsAuth", JSON.stringify(true));
-          //               const user = userCredential.user;
-          //               localStorage.setItem("UID", JSON.stringify(user.uid));
-          //               localStorage.setItem(
-          //                 "Name",
-          //                 JSON.stringify(user.displayName)
-          //               );
-          //               window.location.href = "/";
-          //             })
-          //             .catch((error) => {
-          //               console.log(error.code);
-          //               setAccountErrorText(
-          //                 "Google email different than entered email"
-          //               );
-          //             });
-          //         });
-          //       }
-          //     })
-          //     .catch((error) => {
-          //       setAccountErrorText("Account already exists");
-          //     });
-          // } catch (error) {
-          //   console.log("Account linking error", error);
-          //   setAccountErrorText("Email already in use");
-          // }
-        } else if (errorCode === "auth/invalid-email") {
-          setAccountErrorText("Invalid email");
-        }
-      });
-  };
-  const processAccountCreation = () => {
-    if (valid) {
-      createAccount();
+      }
+    } catch (error: any) {
+      console.error("Google signup error:", error);
+      if (error.code === "auth/popup-closed-by-user") {
+        setError("Sign-in popup was closed");
+      } else {
+        setError("Failed to sign in with Google");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const onClickGoogle = () => {
-    signInWithGoogle();
-  };
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-  const confirmPassword = () => {
-    const password = document.getElementById("password") as HTMLInputElement;
-    const confirm = document.getElementById(
-      "confirmPassword"
-    ) as HTMLInputElement;
+    if (name === "") {
+      setError("Please enter your name");
+      setIsLoading(false);
+      return;
+    }
 
-    if (password && confirm) {
-      valid = true;
+    if (email === "") {
+      setError("Please enter your email");
+      setIsLoading(false);
+      return;
+    }
 
-      if (password.value !== confirm.value && confirm.value !== "") {
-        setAccountErrorText("Passwords do not match");
-        valid = false;
+    if (password === "") {
+      setError("Please enter a password");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const result = await register({
+        name,
+        email,
+        password,
+      });
+      navigate("/"); // Redirect to home page after successful registration
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
       } else {
-        setAccountErrorText("");
+        const error = err as SignupError;
+        setError(
+          error.response?.data?.error || "An error occurred during registration"
+        );
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div>
-      <div className="container__signup" id="signUpContainer">
-        <LoadingDots />
-        <h1 className="header__login-signup">Create Your Account</h1>
-        <div className="field container__eplogin-signup">
-          <label htmlFor="name" className="label__login-signup">
-            Name
-          </label>
-          <input
+    <div className="fixed inset-0 bg-black/50">
+      <div
+        className="w-1/3
+        h-auto
+        bg-gray-900
+        absolute
+        left-1/2
+        top-[max(50%,_300px)]
+        -translate-x-1/2
+        -translate-y-[30%]
+        rounded-[calc((1.5vw+1.5vh)/2)]
+        border-[0.3em] border-white/5
+        px-[2vw]
+        py-[2vh]
+        min-w-[300px]
+        max-w-[500px]
+        space-y-4"
+      >
+        {isLoading && <LoadingDots />}
+        <h1 className="text-3xl font-bold text-white text-center mt-2 mb-2">
+          Create Account
+        </h1>
+        <div className="space-y-4">
+          <Input
             id="name"
-            className="input__login-signup"
+            label="Name"
+            variant="login"
             placeholder="Enter your name..."
             autoComplete="none"
+            value={name}
             onChange={(e) => setName(e.target.value)}
+            fullWidth
           />
-          <span className="span__login-signup--label" aria-hidden="true">
-            <span className="span__login-signup--placeholder">Name</span>
-          </span>
-        </div>
-        <div className="field container__eplogin-signup">
-          <label htmlFor="email" className="label__login-signup">
-            E-mail
-          </label>
-          <input
+
+          <Input
             id="email"
-            className="input__login-signup"
+            label="Email"
+            variant="login"
             placeholder="Enter your email..."
             autoComplete="none"
+            type="email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
+            fullWidth
           />
-          <span className="span__login-signup--label" aria-hidden="true">
-            <span className="span__login-signup--placeholder">E-mail</span>
-          </span>
-        </div>
-        <div className="field container__eplogin-signup">
-          <label htmlFor="password" className="label__login-signup">
-            Password
-          </label>
-          <input
+          <Input
             id="password"
-            className="input__login-signup"
-            placeholder=" "
+            label="Password"
+            variant="login"
+            placeholder="Enter your password"
             autoComplete="none"
             type="password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
+            fullWidth
           />
-          <span className="span__login-signup--label" aria-hidden="true">
-            <span className="span__login-signup--placeholder">Password</span>
-          </span>
-        </div>
-        <div className="field container__eplogin-signup">
-          <label htmlFor="confirmPassword" className="label__login-signup">
-            Confirm Password
-          </label>
-          <input
+          <Input
             id="confirmPassword"
-            className="input__login-signup"
-            placeholder=""
+            label="Confirm Password"
+            variant="login"
+            placeholder="Confirm your password"
             autoComplete="none"
             type="password"
-            onChange={(e) => {
-              setPasswordConfirm(e.target.value);
-              confirmPassword();
-            }}
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            fullWidth
           />
-          <span className="span__login-signup--label" aria-hidden="true">
-            <span className="span__login-signup--placeholder">
-              Confirm Password
-            </span>
+        </div>
+        {error && (
+          <div className="mt-4 px-4 py-2 bg-red-500/10 rounded-lg">
+            <p className="text-sm text-red-500 text-center">{error}</p>
+          </div>
+        )}
+        <div className="space-y-4">
+          <Button
+            type="submit"
+            variant="secondary"
+            size="lg"
+            fullWidth
+            loading={isLoading}
+            onClick={(e) => {
+              e.preventDefault();
+              handleSignup(e as unknown as React.FormEvent<HTMLFormElement>);
+            }}
+          >
+            Sign Up
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-gray-900 text-gray-400">Or</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="google"
+            size="lg"
+            fullWidth
+            loading={isLoading}
+            onClick={handleGoogleSignup}
+          >
+            Sign up with Google
+          </Button>
+        </div>
+
+        <div className="text-center mt-4">
+          <span className="text-gray-400">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500 hover:text-blue-400">
+              Login here
+            </Link>
           </span>
         </div>
-        <p id="accountError" className="text__signup--error">
-          {accountErrorText}
-        </p>
-        <button
-          id="signupButton"
-          onClick={processAccountCreation}
-          className="button__signup"
-        >
-          Create Account
-        </button>
-        {/* <button className="button__google-signup" onClick={onClickGoogle}>
-          Sign up with Google
-        </button> */}
-        <a href="/login">
-          <h3 className="text__login-signup">
-            Already have an account? Log in here!
-          </h3>
-        </a>
       </div>
     </div>
   );

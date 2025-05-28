@@ -1,0 +1,29 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+**/node_modules
+**/venv
+**/__pycache__
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+**/build
+**/dist
+
+# IDE files
+.idea
+.vscode
+
+# Logs
+**/logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
